@@ -104,12 +104,12 @@ def add_info(srcdir):
         UNSORTED[album_index]["tracklist"].append(file)
         info_artists = UNSORTED[album_index]["artist"]
 
-        if info_artists == "Various Artists":
+        if info_artists == ["Various Artists"]:
             continue
 
         common_artists = list(set(info_artists) & set(tag_artists))
         if common_artists == []:
-            UNSORTED[album_index]["artist"] = "Various Artists"
+            UNSORTED[album_index]["artist"] = ["Various Artists"]
             continue
 
         UNSORTED[album_index]["artist"] = common_artists
@@ -121,26 +121,31 @@ def move_files(destdir):
         dest_dir_readable = album_info["artist"][0] + "/" + album_info["album"]
         print(f"Moved {success} files to {dest_dir_readable}")
 
+    # move album info from UNSORTED to SORTED
     move_album_data("sorted", UNSORTED, SORTED);
 
 # checks if all src and dest folders exist, creates them if not
-if os.path.isdir(DEST) == 0:
-    os.mkdir(DEST)
+SRC_FILENAME, DEST_FILENAME = load_filenames()
+if os.path.isdir(DEST_FILENAME) == 0:
+    os.mkdir(DEST_FILENAME)
 
-if os.path.isdir(SRC) == 0:
-    os.mkdir(SRC)
+if os.path.isdir(SRC_FILENAME) == 0:
+    os.mkdir(SRC_FILENAME)
     #print("Add files to src folder")
     exit()
+
+if os.path.isdir(cwd + "/.logs") == 0:
+    os.mkdir(cwd + "/.logs")
 
 UNSORTED = load_json(UNSORTED_FILENAME)
 SORTED = load_json(SORTED_FILENAME)
 
 # loop through all files, add to UNSORTED
-add_info(SRC)
+add_info(SRC_FILENAME)
 # loop through UNSORTED, move each file to dest folder
-move_files(DEST)
+move_files(DEST_FILENAME)
 
-cleandirs(SRC)
+cleandirs(SRC_FILENAME)
 
 write_json(UNSORTED, UNSORTED_FILENAME)
 write_json(SORTED, SORTED_FILENAME)

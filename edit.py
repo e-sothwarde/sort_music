@@ -2,7 +2,6 @@
 import os
 from funcs import *
 
-
 def int_input(response, max_value):
     try:
         n = int(response)
@@ -79,9 +78,10 @@ while(1):
 move_album_data("edited", SORTED, EDITED);
 
 # changes filenames
+SRC_FILENAME, DEST_FILENAME = load_filenames()
 for album_info in EDITED:
-    success = update_files(DEST, album_info, "edited")
+    success = update_files(DEST_FILENAME, album_info, "edited")
 
-cleandirs(DEST)
+cleandirs(DEST_FILENAME)
 write_json(SORTED, SORTED_FILENAME)
 write_json(EDITED, EDITED_FILENAME)

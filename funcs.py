@@ -1,15 +1,31 @@
 import os
 import json
 
-# filenames
-#home = os.path.dirname(os.path.realpath(__file__))
-home, tail = os.path.split(os.path.dirname(os.path.realpath(__file__)))
-UNSORTED_FILENAME = home + "/.config/unsorted.json"
-SORTED_FILENAME = home + "/.config/sorted.json"
-EDITED_FILENAME = home + "/.config/edited.json"
+cwd = os.path.dirname(os.path.realpath(__file__))
+UNSORTED_FILENAME = cwd + "/.logs/unsorted.json"
+SORTED_FILENAME = cwd + "/.logs/sorted.json"
+EDITED_FILENAME = cwd + "/.logs/edited.json"
+SRC_FILENAME = ""
+DEST_FILENAME = ""
 
-SRC = home + "/share/src"
-DEST = home + "/share/dest"
+def load_filenames():
+    config = open(cwd + "/.config").read()
+    config = config.split("\n")
+    src = ""
+    dest = ""
+    for line in config:
+        line = line.split(" = ")
+        if line[0] == "SRC":
+            src = line[1]
+            continue
+        if line[0] == "DEST":
+            dest = line[1]
+            continue
+
+    if src == "" or dest == "":
+        exit(1)
+
+    return src, dest
 
 # write INFO to info.json
 def write_json(data, data_filename):
@@ -25,12 +41,13 @@ def load_json(filename):
         f = open(filename, "r")
         return json.loads(f.read())
 
+# moves json metadata (album_infos) from list src to list dest
 def move_album_data(condition, src, dest):
-    for i in reversed(range(len(src))):
-        if src[i]["status"] == condition:
+    for album_info in reversed(range(len(src))):
+        if src[album_info]["status"] == condition:
             # search edited before adding
-            dest.append(src[i])
-            src.remove(src[i])
+            dest.append(src[album_info])
+            src.remove(src[album_info])
 
 # moves file to destdir
 def move_file(file, dest_dir):
@@ -71,6 +88,7 @@ def update_files(destdir, album_info, status):
     cover_image = album_info["cover_image"]
     if cover_image != "":
         move_file(cover_image, dest_dir)
+        album_info["cover_image"] = dest_dir + "/" + os.path.basename(cover_image)
     album_info["status"] = status
 
     return success
