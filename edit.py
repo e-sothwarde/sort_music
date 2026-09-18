@@ -23,7 +23,6 @@ def print_edit_albums(n):
         artist = SORTED[i]["artist"][0]
         print(f"{i}: {album} - {artist}")
         SORTED[i]["status"] = "edited"
-    print("Enter album number to edit or 'Done' to finish")
 
 def edit_select():
     edit_index = -1
@@ -49,6 +48,7 @@ while (n == -1):
 # edit album info
 while(1):
     print_edit_albums(n)
+    print("Enter album number to edit or 'Done' to finish")
 
     edit_index = edit_select()
     if edit_index == -1:
@@ -73,6 +73,14 @@ while(1):
         album_info["album"] = new_album_name
     if new_artist_name != "":
         album_info["artist"] = [new_artist_name]
+
+# ask to skip any albums
+print_edit_albums(n)
+print("Enter album numbers to skip: ")
+skip_numbers = list(set(input().split(" ")))
+for i in skip_numbers:
+    album_info = SORTED[int(i)]
+    album_info["status"] = "sorted";
 
 # moves data from SORTED to EDITED
 move_album_data("edited", SORTED, EDITED);
