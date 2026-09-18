@@ -75,12 +75,20 @@ while(1):
         album_info["artist"] = [new_artist_name]
 
 # ask to skip any albums
-print_edit_albums(n)
-print("Enter album numbers to skip: ")
-skip_numbers = list(set(input().split(" ")))
-for i in skip_numbers:
-    album_info = SORTED[int(i)]
-    album_info["status"] = "sorted";
+while(1):
+    print_edit_albums(n)
+    print("Enter album numbers to skip or type Done to finish: ")
+    response = input()
+    if response == "Done":
+        break
+    skip_numbers = list(set(response.split(" ")))
+    for i in skip_numbers:
+        try:
+            album_info = SORTED[int(i)]
+        except ValueError:
+            print("Invalid input")
+            continue
+        album_info["status"] = "sorted";
 
 # moves data from SORTED to EDITED
 move_album_data("edited", SORTED, EDITED);
